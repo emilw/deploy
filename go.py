@@ -1,4 +1,6 @@
 import os
+import git
+import json
 
 class Config:
     def __init__(self, path, schedule, script):
@@ -17,12 +19,19 @@ def createDeploymentIfNotExists(gitURL):
         log("Deployment exists, updating...")
         log("...Done")
     else:
-        os.makedirs(localFolder)
+        log("The deployment do not exists, downloading....")
+        git.Repo.clone_from(gitURL, localFolder)
+        log("....Done")
+        #os.makedirs(localFolder)
     
     return localFolder
 
 def getConfiguration(deployPath):
     log("Starting to read configuration from deployment: " + deployPath)
+    configFileContent = open(deployPath+"/deploy.json")
+    data = json.load(configFileContent)
+    log("deploy.json is loaded")
+    log(data["preRequisitePython"][0])
     conf = Config(deployPath, 15, "doit.py")
     return conf
 
@@ -30,7 +39,7 @@ def setupConfig(conf):
     log(conf.script)
 log("Starting deployment")
 
-deployPath = createDeploymentIfNotExists("https://github.com/emilw/testrepo.git")
+deployPath = createDeploymentIfNotExists("https://github.com/emilw/deployTest.git")
 conf = getConfiguration(deployPath)
 
 setupConfig(conf)
