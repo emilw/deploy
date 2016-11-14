@@ -1,3 +1,6 @@
+#Deployments are create on the fly in the same folder structure, ignore them
+deployments/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
