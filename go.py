@@ -2,11 +2,10 @@ import os
 import git
 import json
 
-class Config:
-    def __init__(self, path, schedule, script):
-        self.path = path
-        self.schedule = schedule
-        self.script = script
+class Config(object):
+    def __init__(self, jsonData):
+        self.__dict__ = jsonData
+
 
 def log(text):
     print(text)
@@ -17,6 +16,8 @@ def createDeploymentIfNotExists(gitURL):
     log(localFolder)
     if os.path.exists(localFolder):
         log("Deployment exists, updating...")
+        g = git.cmd.Git(localFolder)
+        g.pull()
         log("...Done")
     else:
         log("The deployment do not exists, downloading....")
@@ -31,12 +32,12 @@ def getConfiguration(deployPath):
     configFileContent = open(deployPath+"/deploy.json")
     data = json.load(configFileContent)
     log("deploy.json is loaded")
-    log(data["preRequisitePython"][0])
-    conf = Config(deployPath, 15, "doit.py")
+    conf = Config(data)
     return conf
 
 def setupConfig(conf):
-    log(conf.script)
+    log("Starting to configure: " + conf.name)
+    #log("Number of python pre reqs: " + len(conf.prerequisitesPython))
 log("Starting deployment")
 
 deployPath = createDeploymentIfNotExists("https://github.com/emilw/deployTest.git")
