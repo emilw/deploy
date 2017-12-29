@@ -6,11 +6,15 @@ In short:
 
 ## Get going
 
-```
+```bash
+#Get the runtime
 git clone https://github.com/emilw/deploy.git
+#Setup the install/prereq script and run it
 chmod +x install.sh 
 ./install.sh
+#Register a repository to deploy from
 ./go.py -r https://github.com/emilw/deployTest
+#Run/Start all registered repositories
 ./go.py -s
 ```
 
