@@ -1,4 +1,5 @@
-import urllib2
+import ssl
+import urllib
 import os
 import datetime
 import json
@@ -70,10 +71,13 @@ def getRemoteDeployJsonFile(gitURL):
     try:
         deployJsonURL = gitURL+"/raw/master/deploy.json"
         log.info("Checking URL %s" % (deployJsonURL))
-        request = urllib2.urlopen(deployJsonURL)
+        ctx = ssl.create_default_context()
+        ctx.check_hostname = False
+        ctx.verify_mode = ssl.CERT_NONE
+        request = urllib.request.urlopen(deployJsonURL, context=ctx)
         status = request.getcode()
         content = request.read()
-    except urllib2.HTTPError:
+    except urllib.error.HTTPError:
         log.info("Failed to find deploy.json in path, please verify path %s in browser" % (deployJsonURL))
         return
 
@@ -94,8 +98,8 @@ def deployConfigForRepository(gitURL):
         setupConfig(gitURL, deployConfig.Name, deployConfig.Branch, deployConfig.VersionTag)
         log.info("Setup created for %s" % deployConfig.Name)
     except KeyError as e:
-        log.info("Failed to load property %s from deploy.json" % (e.message))
-        log.info(content)
+        log.info("Failed to load property %s from deploy.json" % (e))
+        log.info(deployConfig)
         return False
     
     return True
